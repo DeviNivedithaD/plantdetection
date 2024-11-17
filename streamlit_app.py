@@ -128,5 +128,5 @@ elif (app_mode == "Disease Recognition"):
             predicted_class = class_name[result_index]
             st.success("Model is predicting it's a {}".format(predicted_class))
             # Displaying the cure
-            cure = disease_cures.get(predicted_class)
+            cure = disease_cures.get(predicted_class,"No information available for this disease.")
             st.write("Recommended Cure: {}".format(cure))
