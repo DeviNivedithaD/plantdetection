@@ -9,6 +9,12 @@ def model_prediction(test_image):
     input_arr = tf.keras.preprocessing.image.img_to_array(image)
     input_arr = np.array([input_arr])  # convert single image to batch
     predictions = model.predict(input_arr)
+    
+    # Set a threshold for the predictions
+    max_prob = np.max(predictions)
+    if max_prob < 0.7:  # Adjust this threshold as needed
+        return "Unknown"  # Indicate that the image does not belong to any known class
+    
     return np.argmax(predictions)  # return index of max element
 
 # Dictionary of cures for each disease
@@ -18,7 +24,7 @@ disease_cures = {
     'Apple_Cedar_apple_rust': "Use resistant varieties and apply fungicides.",
     'Apple__healthy': "No action needed.",
     'Blueberry__healthy': "No action needed.",
-    'Cherry_(including_sour)__Powdery_mildew': "Use sulfur based fungicides.",
+    'Cherry_(including_sour)__Powdery_mildew': "Use sulfur-based fungicides.",
     'Cherry_(including_sour)__healthy': "No action needed.",
     'Corn_(maize)__Cercospora_leaf_spot Gray_leaf_spot': "Apply fungicides and rotate crops.",
     'Corn_(maize)__Common_rust_': "Use resistant varieties and fungicides.",
@@ -67,22 +73,22 @@ if (app_mode == "Home"):
     
     Our mission is to help in identifying plant diseases efficiently. Upload an image of a plant, and our system will analyze it to detect any signs of diseases. Together, let's protect our crops and ensure a healthier harvest!
 
-    ### How It Works
-    1. *Upload Image:* Go to the **Disease Recognition ** page and upload an image of a plant with suspected diseases.
-    2. *Analysis:* Our system will process the image using advanced algorithms to identify potential diseases.
-    3. *Results:* View the results and recommendations for further action.
+### How It Works
+1. *Upload Image:* Go to the **Disease Recognition** page and upload an image of a plant with suspected diseases.
+2. *Analysis:* Our system will process the image using advanced algorithms to identify potential diseases.
+3. *Results:* View the results and recommendations for further action.
 
-    ### Why Choose Us?
-    - *Accuracy:* Our system utilizes state-of-the-art machine learning techniques for accurate disease detection.
-    - *User -Friendly:* Simple and intuitive interface for seamless user experience.
-    - *Fast and Efficient:* Receive results in seconds, allowing for quick decision-making.
+### Why Choose Us?
+- *Accuracy:* Our system utilizes state-of-the-art machine learning techniques for accurate disease detection.
+- *User -Friendly:* Simple and intuitive interface for seamless user experience.
+- *Fast and Efficient:* Receive results in seconds, allowing for quick decision-making.
 
-    ### Get Started
-    Click on the *Disease Recognition* page in the sidebar to upload an image and experience the power of our Plant Disease Recognition System!
+### Get Started
+Click on the *Disease Recognition* page in the sidebar to upload an image and experience the power of our Plant Disease Recognition System!
 
-    ### About Us
-    Learn more about the project, our team, and our goals on the *About* page.
-    """)
+### About Us
+Learn more about the project, our team, and our goals on the *About* page.
+""")
 
 # About Project
 elif (app_mode == "About"):
@@ -124,9 +130,9 @@ elif (app_mode == "Disease Recognition"):
                           'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato__Leaf_Mold',
                           'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
                           'Tomato__Target_Spot', 'Tomato_Tomato_Yellow_Leaf_Curl_Virus', 'Tomato__Tomato_mosaic_virus',
-                          'Tomato___healthy']
-            predicted_class = class_name[result_index]
+                          'Tomato__healthy']
+            predicted_class = class_name[result_index] if isinstance(result_index, int) else result_index
             st.success("Model is predicting it's a {}".format(predicted_class))
             # Displaying the cure
-            cure = disease_cures.get(predicted_class,"NO INFORMATION AVAILABLE FOR THIS DISEASE.")
+            cure = disease_cures.get(predicted_class, "NO INFORMATION AVAILABLE FOR THIS DISEASE.")
             st.write("Recommended Cure: {}".format(cure))
