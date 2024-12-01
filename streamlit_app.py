@@ -11,17 +11,11 @@ def model_prediction(test_image):
     input_arr = input_arr / 255.0  # Normalize the image
 
     predictions = model.predict(input_arr)
-    st.write("Raw Predictions: ", predictions)  # Debugging output
 
-    # Set a threshold for the predictions
-    max_prob = np.max(predictions)
-    st.write("Max Probability: ", max_prob)  # Debugging output
-
-    if max_prob < 0.7:  # Adjust this threshold as needed
+    if np.max(predictions) < 0.7:  # Adjust this threshold as needed
         return "Unknown"  # Indicate that the image does not belong to any known class
 
     predicted_class_index = np.argmax(predictions)
-    st.write("Predicted Class Index: ", predicted_class_index)  # Debugging output
     return predicted_class_index  # return index of max element
 
 # Dictionary of cures for each disease
@@ -57,7 +51,7 @@ disease_cures = {
     'Tomato__Bacterial_spot': "Remove infected plants and apply copper fungicides.",
     'Tomato__Early_blight': "Apply fungicides and practice crop rotation.",
     'Tomato_Late_blight': "Use resistant varieties and apply fungicides.",
-    'Tomato__Leaf _Mold': "Improve air circulation and use fungicides.",
+    'Tomato__Leaf_Mold': "Improve air circulation and use fungicides.",
     'Tomato__Septoria_leaf_spot': "Remove infected leaves and apply fungicides.",
     'Tomato__Spider_mites Two-spotted_spider_mite': "Use miticides and increase humidity.",
     'Tomato__Target_Spot': "Remove infected leaves and apply fungicides.",
@@ -77,8 +71,7 @@ if (app_mode == "Home"):
     st.image(image_path, use_container_width=True)
     st.markdown("""
     Welcome to the Plant Disease Recognition System! 🌿🔍
-    
-    Our mission is to help in identifying plant diseases efficiently. Upload an image of a plant, and our system will analyze it to detect any signs of diseases. Together, let's protect our crops and ensure a healthier harvest!
+ Our mission is to help in identifying plant diseases efficiently. Upload an image of a plant, and our system will analyze it to detect any signs of diseases. Together, let's protect our crops and ensure a healthier harvest!
 
 ### How It Works
 1. *Upload Image:* Go to the **Disease Recognition** page and upload an image of a plant with suspected diseases.
@@ -87,7 +80,7 @@ if (app_mode == "Home"):
 
 ### Why Choose Us?
 - *Accuracy:* Our system utilizes state-of-the-art machine learning techniques for accurate disease detection.
-- *User  -Friendly:* Simple and intuitive interface for seamless user experience.
+- *User -Friendly:* Simple and intuitive interface for seamless user experience.
 - *Fast and Efficient:* Receive results in seconds, allowing for quick decision-making.
 
 ### Get Started
@@ -135,7 +128,7 @@ elif (app_mode == "Disease Recognition"):
                           'Raspberry__healthy', 'Soybean_healthy', 'Squash__Powdery_mildew',
                           'Strawberry__Leaf_scorch', 'Strawberry__healthy', 'Tomato__Bacterial_spot',
                           'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato__Leaf_Mold',
- 'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
+                          'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
                           'Tomato__Target_Spot', 'Tomato_Tomato_Yellow_Leaf_Curl_Virus', 'Tomato__Tomato_mosaic_virus',
                           'Tomato__healthy']
             predicted_class = class_name[result_index] if isinstance(result_index, int) else result_index
