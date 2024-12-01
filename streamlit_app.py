@@ -8,14 +8,21 @@ def model_prediction(test_image):
     image = tf.keras.preprocessing.image.load_img(test_image, target_size=(128, 128))
     input_arr = tf.keras.preprocessing.image.img_to_array(image)
     input_arr = np.array([input_arr])  # convert single image to batch
+    input_arr = input_arr / 255.0  # Normalize the image
+
     predictions = model.predict(input_arr)
-    
+    st.write("Raw Predictions: ", predictions)  # Debugging output
+
     # Set a threshold for the predictions
     max_prob = np.max(predictions)
+    st.write("Max Probability: ", max_prob)  # Debugging output
+
     if max_prob < 0.7:  # Adjust this threshold as needed
         return "Unknown"  # Indicate that the image does not belong to any known class
-    
-    return np.argmax(predictions)  # return index of max element
+
+    predicted_class_index = np.argmax(predictions)
+    st.write("Predicted Class Index: ", predicted_class_index)  # Debugging output
+    return predicted_class_index  # return index of max element
 
 # Dictionary of cures for each disease
 disease_cures = {
@@ -63,7 +70,7 @@ disease_cures = {
 st.sidebar.title("Dashboard")
 app_mode = st.sidebar.selectbox("Select Page", ["Home", "About", "Disease Recognition"])
 
-# Main Page
+# # Main Page
 if (app_mode == "Home"):
     st.header("PLANT DISEASE RECOGNITION SYSTEM")
     image_path = "th.jpg"
