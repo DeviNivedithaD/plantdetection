@@ -57,7 +57,7 @@ disease_cures = {
     'Tomato__Bacterial_spot': "Remove infected plants and apply copper fungicides.",
     'Tomato__Early_blight': "Apply fungicides and practice crop rotation.",
     'Tomato_Late_blight': "Use resistant varieties and apply fungicides.",
-    'Tomato__Leaf_Mold': "Improve air circulation and use fungicides.",
+    'Tomato__Leaf _Mold': "Improve air circulation and use fungicides.",
     'Tomato__Septoria_leaf_spot': "Remove infected leaves and apply fungicides.",
     'Tomato__Spider_mites Two-spotted_spider_mite': "Use miticides and increase humidity.",
     'Tomato__Target_Spot': "Remove infected leaves and apply fungicides.",
@@ -87,7 +87,7 @@ if (app_mode == "Home"):
 
 ### Why Choose Us?
 - *Accuracy:* Our system utilizes state-of-the-art machine learning techniques for accurate disease detection.
-- *User -Friendly:* Simple and intuitive interface for seamless user experience.
+- *User  -Friendly:* Simple and intuitive interface for seamless user experience.
 - *Fast and Efficient:* Receive results in seconds, allowing for quick decision-making.
 
 ### Get Started
@@ -134,8 +134,8 @@ elif (app_mode == "Disease Recognition"):
                           'Potato__Early_blight', 'Potato_Late_blight', 'Potato__healthy',
                           'Raspberry__healthy', 'Soybean_healthy', 'Squash__Powdery_mildew',
                           'Strawberry__Leaf_scorch', 'Strawberry__healthy', 'Tomato__Bacterial_spot',
-                          'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato __Leaf_Mold',
-                          'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
+                          'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato__Leaf_Mold',
+ 'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
                           'Tomato__Target_Spot', 'Tomato_Tomato_Yellow_Leaf_Curl_Virus', 'Tomato__Tomato_mosaic_virus',
                           'Tomato__healthy']
             predicted_class = class_name[result_index] if isinstance(result_index, int) else result_index
