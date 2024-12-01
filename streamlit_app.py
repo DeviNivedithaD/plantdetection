@@ -70,7 +70,7 @@ disease_cures = {
 st.sidebar.title("Dashboard")
 app_mode = st.sidebar.selectbox("Select Page", ["Home", "About", "Disease Recognition"])
 
-# # Main Page
+# Main Page
 if (app_mode == "Home"):
     st.header("PLANT DISEASE RECOGNITION SYSTEM")
     image_path = "th.jpg"
@@ -134,12 +134,12 @@ elif (app_mode == "Disease Recognition"):
                           'Potato__Early_blight', 'Potato_Late_blight', 'Potato__healthy',
                           'Raspberry__healthy', 'Soybean_healthy', 'Squash__Powdery_mildew',
                           'Strawberry__Leaf_scorch', 'Strawberry__healthy', 'Tomato__Bacterial_spot',
-                          'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato__Leaf_Mold',
+                          'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato __Leaf_Mold',
                           'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
                           'Tomato__Target_Spot', 'Tomato_Tomato_Yellow_Leaf_Curl_Virus', 'Tomato__Tomato_mosaic_virus',
                           'Tomato__healthy']
             predicted_class = class_name[result_index] if isinstance(result_index, int) else result_index
-            st.success("Model is predicting it's a {}".format(predicted_class))
+            st.write("Predicted Class: {}".format(predicted_class))  # Debugging output
             # Displaying the cure
-            cure = disease_cures.get(predicted_class, "NO INFORMATION AVAILABLE FOR THIS DISEASE.")
+            cure = disease_cures.get(predicted_class, f"No specific cure information available for '{predicted_class}'. Please consult an expert.")
             st.write("Recommended Cure: {}".format(cure))
