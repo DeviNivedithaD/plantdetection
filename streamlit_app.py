@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 from tensorflow.keras.applications import VGG16
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from tensorflow.keras.applications.vgg16 import preprocess_input
 
 # Load the pre-trained VGG16 model for feature extraction
 feature_extractor = VGG16(weights='imagenet', include_top=False, pooling='avg')
@@ -12,23 +13,38 @@ def model_prediction(test_image):
     model = tf.keras.models.load_model("trained_model.keras")
     image = load_img(test_image, target_size=(128, 128))
     input_arr = img_to_array(image)
-    input_arr = np.array([input_arr])  # convert single image to batch
+    input_arr = preprocess_input(np.array([input_arr]))  # Preprocess image for VGG16
     predictions = model.predict(input_arr)
     predicted_index = np.argmax(predictions)
     confidence = predictions[0][predicted_index]
-    return predicted_index, confidence  # return index of max element and confidence
+    return predicted_index, confidence  # Return index of max element and confidence
 
 # Function to extract features from an image
 def extract_features(image_path):
     image = load_img(image_path, target_size=(128, 128))
     input_arr = img_to_array(image)
     input_arr = np.expand_dims(input_arr, axis=0)
+    input_arr = preprocess_input(input_arr)  # Preprocess image for feature extraction
     features = feature_extractor.predict(input_arr)
     return features
 
 # Function to calculate similarity
 def calculate_similarity(features1, features2):
     return np.linalg.norm(features1 - features2)
+
+# Function to validate whether the image resembles a leaf/plant
+def validate_leaf_image(image_path):
+    """
+    Validates if the uploaded image is likely to be a plant/leaf image 
+    using feature extraction and comparison to a basic threshold.
+    """
+    features = extract_features(image_path)
+    # Set a threshold for similarity to plant images (tunable parameter)
+    similarity_threshold = 0.5
+    # Placeholder: Replace with actual feature vector from a sample leaf image
+    sample_leaf_feature = np.random.random(features.shape)  # Simulate a known leaf feature
+    similarity_score = calculate_similarity(features, sample_leaf_feature)
+    return similarity_score <= similarity_threshold  # Returns True if similar to a leaf
 
 # Dictionary of cures for each disease
 disease_cures = {
@@ -77,10 +93,9 @@ st.sidebar.title("Dashboard")
 app_mode = st.sidebar.selectbox("Select Page", ["Home", "About", "Disease Recognition"])
 
 # Main Page
-if (app_mode == "Home"):
+if app_mode == "Home":
     st.header("PLANT DISEASE RECOGNITION SYSTEM")
-    image_path = "th.jpg"
-    st.image(image_path, use_container_width=True)
+    st.image("th.jpg", use_container_width=True)
     st.markdown("""
     Welcome to the Plant Disease Recognition System! 🌿🔍
     
@@ -102,11 +117,9 @@ if (app_mode == "Home"):
     ### About Us
     Learn more about the project, our team, and our goals on the *About* page.
     """)
-
-# About Project
-elif (app_mode == "About"):
+elif app_mode == "About":
     st.header("About")
-    st.markdown("""
+     st.markdown("""
                 #### About Dataset
                 This dataset is recreated using offline augmentation from the original dataset.
                 This dataset consists of about 87K RGB images of healthy and diseased crop leaves which is categorized into 38 different classes. The total dataset is divided into an 80/20 ratio of training and validation set preserving the directory structure.
@@ -117,20 +130,22 @@ elif (app_mode == "About"):
                 3. validation (17572 images)
                 """)
 
-# Prediction Page
-elif (app_mode == "Disease Recognition"):
+elif app_mode == "Disease Recognition":
     st.header("Disease Recognition")
     test_image = st.file_uploader("Choose an Image:")
-    if (test_image is not None):
-        if (st.button("Show Image")):
-            st.image(test_image, width=400, use_container_width=True)
-        # Predict button
-        if (st.button("Predict")):
-            st.snow()
-            st.write("Our Prediction")
-            result_index, confidence = model_prediction(test_image)
-            confidence_threshold = 0.7  # Set a threshold for confidence
-            class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple__healthy',
+    if test_image is not None:
+        st.image(test_image, width=400, use_container_width=True)
+        if st.button("Predict"):
+            # Save uploaded image for processing
+            with open("temp_image.jpg", "wb") as f:
+                f.write(test_image.getbuffer())
+            if not validate_leaf_image("temp_image.jpg"):
+                st.warning("The uploaded image does not resemble a plant or leaf. Please upload a valid plant image.")
+            else:
+                st.write("Processing...")
+                result_index, confidence = model_prediction("temp_image.jpg")
+                confidence_threshold = 0.7
+                  class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple__healthy',
                           'Blueberry__healthy', 'Cherry_(including_sour)__Powdery_mildew',
                           'Cherry_(including_sour)__healthy', 'Corn_(maize)__Cercospora_leaf_spot Gray_leaf_spot',
                           'Corn_(maize)__Common_rust_', 'Corn_(maize)__Northern_Leaf_Blight', 'Corn_(maize)__healthy',
@@ -144,13 +159,12 @@ elif (app_mode == "Disease Recognition"):
                           'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
                           'Tomato__Target_Spot', 'Tomato_Tomato_Yellow_Leaf_Curl_Virus', 'Tomato__Tomato_mosaic_virus',
                           'Tomato__healthy']
-            predicted_class = class_name[result_index]
+                predicted_class = class_name[result_index]
 
-            if confidence < confidence_threshold:
-                st.warning("The model is not confident about this prediction. It may be an unknown disease or not in the database.")
-                st.write("Predicted Class: Unknown")
-            else:
-                st.success("Model is predicting it's a {}".format(predicted_class))
-                # Displaying the cure
-                cure = disease_cures.get(predicted_class, "NO INFORMATION AVAILABLE FOR THIS DISEASE.")
-                st.write("Recommended Cure: {}".format(cure))
+                if confidence < confidence_threshold:
+                    st.warning("The model is not confident about this prediction.")
+                    st.write("Predicted Class: Unknown")
+                else:
+                    st.success(f"Model predicts it's {predicted_class}")
+                    cure = disease_cures.get(predicted_class, "No information available for this disease.")
+                    st.write(f"Recommended Cure: {cure}")
