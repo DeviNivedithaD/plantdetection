@@ -124,7 +124,6 @@ elif app_mode == "Disease Recognition":
     if test_image is not None:
         st.image(test_image, width=400, use_container_width=True)
         if st.button("Predict"):
-            st.snow()
             # Save uploaded image for processing
             with open("temp_image.jpg", "wb") as f:
                 f.write(test_image.getbuffer())
