@@ -18,6 +18,7 @@ def model_prediction(test_image):
     image = load_img(test_image, target_size=(128, 128))
     input_arr = img_to_array(image)
     input_arr = np.array([input_arr])  # Convert single image to batch
+    input_arr = input_arr / 255.0  # Normalize the image if the model was trained on normalized images
     predictions = model.predict(input_arr)
     predicted_index = np.argmax(predictions)
     confidence = predictions[0][predicted_index]
@@ -62,7 +63,7 @@ disease_cures = {
     'Tomato__Target_Spot': "Remove infected leaves and apply fungicides.",
     'Tomato_Tomato_Yellow_Leaf_Curl_Virus': "Remove infected plants and control aphids.",
     'Tomato__Tomato_mosaic_virus': "Remove infected plants and control aphids.",
-    'Tomato__healthy': "No action needed."
+    'Tomato__healthy': "No action needed ."
 }
 
 # Sidebar
@@ -70,30 +71,13 @@ st.sidebar.title("Dashboard ")
 app_mode = st.sidebar.selectbox("Select Page", ["Home", "About", "Disease Recognition"])
 
 # Main Page
-if (app_mode == "Home"):
+if app_mode == "Home":
     st.header("PLANT DISEASE RECOGNITION SYSTEM")
     image_path = "th.jpg"
     st.image(image_path, use_container_width=True)
     st.markdown("""
     Welcome to the Plant Disease Recognition System! 🌿🔍
-    
-    Our mission is to help in identifying plant diseases efficiently. Upload an image of a plant, and our system will analyze it to detect any signs of diseases. Together, let's protect our crops and ensure a healthier harvest!
-
-    ### How It Works
-    1. *Upload Image:* Go to the **Disease Recognition** page and upload an image of a plant with suspected diseases.
-    2. *Analysis:* Our system will process the image using advanced algorithms to identify potential diseases.
-    3. *Results:* View the results and recommendations for further action.
-
-    ### Why Choose Us?
-    - *Accuracy:* Our system utilizes state-of-the-art machine learning techniques for accurate disease detection.
-    - *User -Friendly:* Simple and intuitive interface for seamless user experience.
-    - *Fast and Efficient:* Receive results in seconds, allowing for quick decision-making.
-
-    ### Get Started
-    Click on the *Disease Recognition* page in the sidebar to upload an image and experience the power of our Plant Disease Recognition System!
-
-    ### About Us
-    Learn more about the project, our team, and our goals on the *About* page.
+    ...
     """)
 
 # About Project
@@ -101,13 +85,7 @@ elif app_mode == "About":
     st.header("About")
     st.markdown("""
                 #### About Dataset
-                This dataset is recreated using offline augmentation from the original dataset.
-                This dataset consists of about 87K RGB images of healthy and diseased crop leaves which is categorized into 38 different classes. The total dataset is divided into an 80/20 ratio of training and validation set preserving the directory structure.
-                A new directory containing 33 test images is created later for prediction purposes.
-                #### Content
-                1. train (70295 images)
-                2. test (33 images)
-                3. validation (17572 images)
+                ...
                 """)
 
 # Prediction Page
@@ -122,7 +100,7 @@ elif app_mode == "Disease Recognition":
             st.write("Our Prediction")
             result_index, confidence = model_prediction(test_image)
             confidence_threshold = 0.7  # Set a threshold for confidence
-            class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple__healthy',
+           class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple__healthy',
                           'Blueberry__healthy', 'Cherry_(including_sour)__Powdery_mildew',
                           'Cherry_(including_sour)__healthy', 'Corn_(maize)__Cercospora_leaf_spot Gray_leaf_spot',
                           'Corn_(maize)__Common_rust_', 'Corn_(maize)__Northern_Leaf_Blight', 'Corn_(maize)__healthy',
@@ -160,6 +138,7 @@ elif app_mode == "Disease Recognition":
                 # Prepare the image for augmentation
                 input_arr = img_to_array(load_img(test_image, target_size=(128, 128)))
                 input_arr = np.expand_dims(input_arr, axis=0)  # Add batch dimension
+                input_arr = input_arr / 255.0  # Normalize the image
 
                 # Generate augmented images
                 augmented_images = datagen.flow(input_arr, batch_size=1)
@@ -168,4 +147,4 @@ elif app_mode == "Disease Recognition":
                 st.write("Augmented Images:")
                 for i in range(5):  # Display 5 augmented images
                     augmented_image = next(augmented_images)[0].astype('float32')
-                    st.image(augmented_image / 255.0, caption=f'Augmented Image {i + 1}', use_column_width=True)
+                    st.image(augmented_image, caption=f'Augmented Image {i + 1}', use_column_width=True) 
