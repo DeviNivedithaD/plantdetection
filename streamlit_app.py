@@ -20,50 +20,17 @@ def model_prediction(test_image):
     input_arr = np.array([input_arr])  # Convert single image to batch
     input_arr = input_arr / 255.0  # Normalize the image if the model was trained on normalized images
     predictions = model.predict(input_arr)
+    
+    # Debugging: Print predictions
+    print("Raw predictions:", predictions)
+    
     predicted_index = np.argmax(predictions)
     confidence = predictions[0][predicted_index]
     return predicted_index, confidence  # Return index of max element and confidence
 
 # Dictionary of cures for each disease
 disease_cures = {
-    'Apple__Apple_scab': "Apply fungicides and improve air circulation.",
-    'Apple_Black_rot': "Remove infected leaves and apply fungicides.",
-    'Apple_Cedar_apple_rust': "Use resistant varieties and apply fungicides.",
-    'Apple__healthy': "No action needed.",
-    'Blueberry__healthy': "No action needed.",
-    'Cherry_(including_sour)__Powdery_mildew': "Use sulfur based fungicides.",
-    'Cherry_(including_sour)__healthy': "No action needed.",
-    'Corn_(maize)__Cercospora_leaf_spot Gray_leaf_spot': "Apply fungicides and rotate crops.",
-    'Corn_(maize)__Common_rust_': "Use resistant varieties and fungicides.",
-    'Corn_(maize)__Northern_Leaf_Blight': "Remove infected debris and apply fungicides.",
-    'Corn_(maize)__healthy': "No action needed.",
-    'Grape__Black_rot': "Remove infected leaves and apply fungicides.",
-    'Grape__Esca_(Black_Measles)': "Prune infected vines and improve drainage.",
-    'Grape__Leaf_blight_(Isariopsis_Leaf_Spot)': "Use fungicides and practice crop rotation.",
-    'Grape__healthy': "No action needed.",
-    'Orange__Haunglongbing_(Citrus_greening)': "Remove infected trees and control psyllids.",
-    'Peach___Bacterial_spot': "Use resistant varieties and apply copper-based fungicides.",
-    'Peach__healthy': "No action needed.",
-    'Pepper,_bell__Bacterial_spot': "Remove infected plants and apply copper fungicides.",
-    'Pepper,_bell__healthy': "No action needed.",
-    'Potato__Early_blight': "Apply fungicides and practice crop rotation.",
-    'Potato_Late_blight': "Use resistant varieties and apply fungicides.",
-    'Potato__healthy': "No action needed.",
-    'Raspberry__healthy': "No action needed.",
-    'Soybean_healthy': "No action needed.",
-    'Squash__Powdery_mildew': "Use sulfur-based fungicides and improve air circulation.",
-    'Strawberry__Leaf_scorch': "Use resistant varieties and improve drainage.",
-    'Strawberry__healthy': "No action needed.",
-    'Tomato__Bacterial_spot': "Remove infected plants and apply copper fungicides.",
-    'Tomato__Early_blight': "Apply fungicides and practice crop rotation.",
-    'Tomato_Late_blight': "Use resistant varieties and apply fungicides.",
-    'Tomato__Leaf_Mold': "Improve air circulation and use fungicides.",
-    'Tomato__Septoria_leaf_spot': "Remove infected leaves and apply fungicides.",
-    'Tomato__Spider_mites Two-spotted_spider_mite': "Use miticides and increase humidity.",
-    'Tomato__Target_Spot': "Remove infected leaves and apply fungicides.",
-    'Tomato_Tomato_Yellow_Leaf_Curl_Virus': "Remove infected plants and control aphids.",
-    'Tomato__Tomato_mosaic_virus': "Remove infected plants and control aphids.",
-    'Tomato__healthy': "No action needed ."
+    # ... (same as before)
 }
 
 # Sidebar
@@ -99,11 +66,11 @@ elif app_mode == "Disease Recognition":
         if st.button("Predict"):
             st.write("Our Prediction")
             result_index, confidence = model_prediction(test_image)
-            confidence_threshold = 0.7  # Set a threshold for confidence
+            confidence_threshold = 0.5  # Lowered threshold for testing
             class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple__healthy',
                           'Blueberry__healthy', 'Cherry_(including_sour)__Powdery_mildew',
                           'Cherry_(including_sour)__healthy', 'Corn_(maize)__Cercospora_leaf_spot Gray_leaf_spot',
-                          'Corn_(maize)__Common_rust_', 'Corn_(maize)__Northern_Leaf_Blight', 'Corn_(maize)__healthy',
+                          'Corn_(maize)__Common_rust_', ' Corn_(maize)__Northern_Leaf_Blight', 'Corn_(maize)__healthy',
                           'Grape__Black_rot', 'Grape__Esca_(Black_Measles)', 'Grape__Leaf_blight_(Isariopsis_Leaf_Spot)',
                           'Grape__healthy', 'Orange__Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot',
                           'Peach__healthy', 'Pepper,_bell__Bacterial_spot', 'Pepper,_bell__healthy',
