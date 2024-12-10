@@ -4,6 +4,7 @@ import numpy as np
 from tensorflow.keras.applications import VGG16
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from tensorflow.keras.applications.vgg16 import preprocess_input
+from PIL import Image
 
 # Load the pre-trained VGG16 model for feature extraction
 feature_extractor = VGG16(weights='imagenet', include_top=False, pooling='avg')
@@ -33,7 +34,6 @@ class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 
                           'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
                           'Tomato__Target_Spot', 'Tomato_Tomato_Yellow_Leaf_Curl_Virus', 'Tomato__Tomato_mosaic_virus',
                           'Tomato__healthy']
-
 # TensorFlow Model Prediction
 def model_prediction(test_image):
     """
@@ -65,14 +65,26 @@ def validate_leaf_image(image_path):
     Validates if the uploaded image is likely to be a plant/leaf image using feature similarity.
     """
     features = extract_features(image_path)
+    
+    # Debug: Display extracted features
+    st.write("Extracted features from uploaded image:", features)
+
     similarity_scores = [np.linalg.norm(features - leaf_feature) for leaf_feature in known_leaf_features]
+    
+    # Debug: Display known leaf features
+    st.write("Known leaf features:", known_leaf_features)
     
     # Debug: Display similarity scores
     st.write("Similarity scores:", similarity_scores)
     
     # Use the minimum similarity score for validation
+    min_similarity_score = min(similarity_scores)
     similarity_threshold = 5.0  # Adjust this threshold based on your dataset
-    return min(similarity_scores) <= similarity_threshold
+    
+    # Debug: Display minimum similarity score and threshold
+    st.write(f"Minimum similarity score: {min_similarity_score}, Threshold: {similarity_threshold}")
+    
+    return min_similarity_score <= similarity_threshold
 
 # Dictionary of cures for each disease
 disease_cures = {
@@ -115,8 +127,6 @@ disease_cures = {
     'Tomato__Tomato_mosaic_virus': "Remove infected plants and control aphids.",
     'Tomato__healthy': "No action needed ."
 }
-
-
 # Streamlit App
 st.sidebar.title("Dashboard")
 app_mode = st.sidebar.selectbox("Select Page", ["Home", "About", "Disease Recognition"])
@@ -130,7 +140,7 @@ if app_mode == "Home":
     
     Upload an image of a plant, and our system will analyze it to detect diseases.
     ### Get Started
-    Click on the Disease Recognition page in the sidebar to upload an image.
+    Click on the *Disease Recognition* page in the sidebar to upload an image.
     """)
 
 elif app_mode == "About":
@@ -143,22 +153,16 @@ elif app_mode == "Disease Recognition":
     st.header("Disease Recognition")
     test_image = st.file_uploader("Choose an Image:")
     if test_image is not None:
-        st.image(test_image, width=400, use_container_width=True)
-        with open("temp_image.jpg", "wb") as f:
+        # Save the uploaded image temporarily
+        image_path = "uploaded_image.jpg"
+        with open(image_path, "wb") as f:
             f.write(test_image.getbuffer())
-        if st.button("Predict"):
-            st.snow()
-            if not validate_leaf_image("temp_image.jpg"):
-                st.warning("The uploaded image does not resemble a plant or leaf. Please upload a valid plant image.")
-            else:
-                st.write("Processing...")
-                result_index, confidence = model_prediction("temp_image.jpg")
-                confidence_threshold = 0.7  # Adjust based on your model's behavior
-                if confidence < confidence_threshold:
-                    st.warning("The model is not confident about this prediction.")
-                    st.write("Predicted Class: Unknown")
-                else:
-                    predicted_class = class_names[result_index]
-                    st.success(f"Model predicts it's {predicted_class}")
-                    cure = disease_cures.get(predicted_class, "No information available for this disease.")
-                    st.write(f"Recommended Cure: {cure}")
+        
+        # Resize the image to 128x128 and validate
+        if validate_leaf_image(image_path):
+            predicted_index, confidence = model_prediction(image_path)
+            disease_name = class_names[predicted_index]
+            st.write(f"Predicted Disease: {disease_name} with confidence: {confidence:.2f}")
+            st.write("Recommended Cure:", disease_cures.get(disease_name, "No cure available."))
+        else:
+            st.write("The uploaded image does not resemble a known leaf/plant image.")
