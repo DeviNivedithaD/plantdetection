@@ -3,25 +3,32 @@ import tensorflow as tf
 import numpy as np
 from tensorflow.keras.applications import VGG16
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
-from PIL import Image
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 # Load the pre-trained VGG16 model for feature extraction
 feature_extractor = VGG16(weights='imagenet', include_top=False, pooling='avg')
 
-# Load the trained model for prediction
-model = tf.keras.models.load_model("trained_model.keras")
-
-# TensorFlow Model Prediction
+# Tensorflow Model Prediction
 def model_prediction(test_image):
-    # Resize the image to 128x128
+    model = tf.keras.models.load_model("trained_model.keras")
     image = load_img(test_image, target_size=(128, 128))
     input_arr = img_to_array(image)
-    input_arr = np.array([input_arr])  # Convert single image to batch
+    input_arr = np.array([input_arr])  # convert single image to batch
     predictions = model.predict(input_arr)
     predicted_index = np.argmax(predictions)
     confidence = predictions[0][predicted_index]
-    return predicted_index, confidence  # Return index of max element and confidence
+    return predicted_index, confidence  # return index of max element and confidence
+
+# Function to extract features from an image
+def extract_features(image_path):
+    image = load_img(image_path, target_size=(128, 128))
+    input_arr = img_to_array(image)
+    input_arr = np.expand_dims(input_arr, axis=0)
+    features = feature_extractor.predict(input_arr)
+    return features
+
+# Function to calculate similarity
+def calculate_similarity(features1, features2):
+    return np.linalg.norm(features1 - features2)
 
 # Dictionary of cures for each disease
 disease_cures = {
@@ -62,15 +69,16 @@ disease_cures = {
     'Tomato__Target_Spot': "Remove infected leaves and apply fungicides.",
     'Tomato_Tomato_Yellow_Leaf_Curl_Virus': "Remove infected plants and control aphids.",
     'Tomato__Tomato_mosaic_virus': "Remove infected plants and control aphids.",
-    'Tomato__healthy': "No action needed."
+    'Tomato__healthy': "No action needed ."
 }
 
 # Sidebar
-st.sidebar.title("Dashboard ")
+st.sidebar.title("Dashboard")
 app_mode = st.sidebar.selectbox("Select Page", ["Home", "About", "Disease Recognition"])
 
 # Main Page
-if app_mode == "Home st.header("PLANT DISEASE RECOGNITION SYSTEM")
+if (app_mode == "Home"):
+    st.header("PLANT DISEASE RECOGNITION SYSTEM")
     image_path = "th.jpg"
     st.image(image_path, use_container_width=True)
     st.markdown("""
@@ -96,7 +104,7 @@ if app_mode == "Home st.header("PLANT DISEASE RECOGNITION SYSTEM")
     """)
 
 # About Project
-elif app_mode == "About":
+elif (app_mode == "About"):
     st.header("About")
     st.markdown("""
                 #### About Dataset
@@ -110,14 +118,15 @@ elif app_mode == "About":
                 """)
 
 # Prediction Page
-elif app_mode == "Disease Recognition":
+elif (app_mode == "Disease Recognition"):
     st.header("Disease Recognition")
     test_image = st.file_uploader("Choose an Image:")
-    if test_image is not None:
-        if st.button("Show Image"):
+    if (test_image is not None):
+        if (st.button("Show Image")):
             st.image(test_image, width=400, use_container_width=True)
         # Predict button
-        if st.button("Predict"):
+        if (st.button("Predict")):
+            st.snow()
             st.write("Our Prediction")
             result_index, confidence = model_prediction(test_image)
             confidence_threshold = 0.7  # Set a threshold for confidence
@@ -145,26 +154,3 @@ elif app_mode == "Disease Recognition":
                 # Displaying the cure
                 cure = disease_cures.get(predicted_class, "NO INFORMATION AVAILABLE FOR THIS DISEASE.")
                 st.write("Recommended Cure: {}".format(cure))
-
-                # Augment the image using ImageDataGenerator
-                datagen = ImageDataGenerator(
-                    rotation_range=20,
-                    width_shift_range=0.2,
-                    height_shift_range=0.2,
-                    zoom_range=0.2,
-                    horizontal_flip=True,
-                    fill_mode='nearest'
-                )
-
-                # Prepare the image for augmentation
-                input_arr = img_to_array(load_img(test_image, target_size=(128, 128)))
-                input_arr = np.expand_dims(input_arr, axis=0)  # Add batch dimension
-
-                # Generate augmented images
-                augmented_images = datagen.flow(input_arr, batch_size=1)
-
-                # Display some augmented images
-                st.write("Augmented Images:")
-                for i in range(5):  # Display 5 augmented images
-                    augmented_image = next(augmented_images)[0].astype('float32')
-                    st.image(augmented_image / 255.0, caption=f'Augmented Image {i + 1}', use_column_width=True)
