@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 from tensorflow.keras.applications import VGG16
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from PIL import Image
 
 # Load the pre-trained VGG16 model for feature extraction
 feature_extractor = VGG16(weights='imagenet', include_top=False, pooling='avg')
@@ -10,7 +11,15 @@ feature_extractor = VGG16(weights='imagenet', include_top=False, pooling='avg')
 # Tensorflow Model Prediction
 def model_prediction(test_image):
     model = tf.keras.models.load_model("trained_model.keras")
-    image = load_img(test_image, target_size=(128, 128))
+    
+    # Open the image using PIL
+    image = Image.open(test_image)
+    
+    # Resize the image to 128x128 and convert to RGB
+    image = image.resize((128, 128))
+    image = image.convert("RGB")
+    
+    # Convert the image to array
     input_arr = img_to_array(image)
     input_arr = np.array([input_arr])  # convert single image to batch
     predictions = model.predict(input_arr)
@@ -67,9 +76,9 @@ disease_cures = {
     'Tomato__Septoria_leaf_spot': "Remove infected leaves and apply fungicides.",
     'Tomato__Spider_mites Two-spotted_spider_mite': "Use miticides and increase humidity.",
     'Tomato__Target_Spot': "Remove infected leaves and apply fungicides.",
-    'Tomato_Tomato_Yellow_Leaf_Curl_Virus': "Remove infected plants and control aphids.",
+    'Tomato_Tomato _Yellow_Leaf_Curl_Virus': "Remove infected plants and control aphids.",
     'Tomato__Tomato_mosaic_virus': "Remove infected plants and control aphids.",
-    'Tomato__healthy': "No action needed ."
+    'Tomato__healthy': "No action needed."
 }
 
 # Sidebar
@@ -120,10 +129,13 @@ elif (app_mode == "About"):
 # Prediction Page
 elif (app_mode == "Disease Recognition"):
     st.header("Disease Recognition")
-    test_image = st.file_uploader("Choose an Image:")
+    test_image = st.file_uploader("Choose an Image:", type=["jpg", "jpeg", "png"])
     if (test_image is not None):
         if (st.button("Show Image")):
-            st.image(test_image, width=400, use_container_width=True)
+            # Open the image using PIL for display
+            image = Image.open(test_image)
+            st.image(image, width=400, use_container_width=True)
+        
         # Predict button
         if (st.button("Predict")):
             st.write("Our Prediction")
