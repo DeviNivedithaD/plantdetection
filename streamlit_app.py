@@ -4,12 +4,17 @@ import numpy as np
 from tensorflow.keras.applications import VGG16
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from tensorflow.keras.applications.vgg16 import preprocess_input
+import pickle
 
 # Load the pre-trained VGG16 model for feature extraction
 feature_extractor = VGG16(weights='imagenet', include_top=False, pooling='avg')
 
 # Load the trained plant disease recognition model
 model = tf.keras.models.load_model("trained_model.keras")
+
+# Load the saved known_leaf_features
+with open("known_leaf_features.pkl", "rb") as f:
+    known_leaf_features = pickle.load(f)
 
 # TensorFlow Model Prediction
 def model_prediction(test_image):
@@ -37,7 +42,7 @@ def extract_features(image_path):
     return features
 
 # Function to validate whether the image resembles a leaf/plant
-def validate_leaf_image(image_path, known_leaf_features):
+def validate_leaf_image(image_path):
     """
     Validates if the uploaded image is likely to be a plant/leaf image using feature similarity.
     """
@@ -89,12 +94,6 @@ disease_cures = {
     'Tomato__healthy': "No action needed ."
 }
 
-# Load sample features for validation (simulate known features)
-# Ideally, replace this with pre-extracted features from real plant images
-known_leaf_features = [
-    np.random.random((512,)),  # Placeholder for actual feature vectors
-    np.random.random((512,))   # Add more vectors as needed
-]
 
 # Streamlit App
 st.sidebar.title("Dashboard")
@@ -124,10 +123,11 @@ elif app_mode == "Disease Recognition":
     if test_image is not None:
         st.image(test_image, width=400, use_container_width=True)
         if st.button("Predict"):
+            st.snow()
             # Save uploaded image for processing
             with open("temp_image.jpg", "wb") as f:
                 f.write(test_image.getbuffer())
-            if not validate_leaf_image("temp_image.jpg", known_leaf_features):
+            if not validate_leaf_image("temp_image.jpg"):
                 st.warning("The uploaded image does not resemble a plant or leaf. Please upload a valid plant image.")
             else:
                 st.write("Processing...")
