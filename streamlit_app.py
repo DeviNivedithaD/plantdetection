@@ -66,7 +66,12 @@ def validate_leaf_image(image_path):
     """
     features = extract_features(image_path)
     similarity_scores = [np.linalg.norm(features - leaf_feature) for leaf_feature in known_leaf_features]
-    similarity_threshold = 1.0  # Adjust this threshold based on experimentation
+    
+    # Debug: Display similarity scores
+    st.write("Similarity scores:", similarity_scores)
+    
+    # Use the minimum similarity score for validation
+    similarity_threshold = 5.0  # Adjust this threshold based on your dataset
     return min(similarity_scores) <= similarity_threshold
 
 # Dictionary of cures for each disease
@@ -110,6 +115,7 @@ disease_cures = {
     'Tomato__Tomato_mosaic_virus': "Remove infected plants and control aphids.",
     'Tomato__healthy': "No action needed ."
 }
+
 
 # Streamlit App
 st.sidebar.title("Dashboard")
