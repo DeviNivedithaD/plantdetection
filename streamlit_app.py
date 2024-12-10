@@ -4,6 +4,7 @@ import numpy as np
 from tensorflow.keras.applications import VGG16
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 # Load the pre-trained VGG16 model for feature extraction
 feature_extractor = VGG16(weights='imagenet', include_top=False, pooling='avg')
@@ -69,8 +70,7 @@ st.sidebar.title("Dashboard ")
 app_mode = st.sidebar.selectbox("Select Page", ["Home", "About", "Disease Recognition"])
 
 # Main Page
-if app_mode == "Home":
-    st.header("PLANT DISEASE RECOGNITION SYSTEM")
+if app_mode == "Home st.header("PLANT DISEASE RECOGNITION SYSTEM")
     image_path = "th.jpg"
     st.image(image_path, use_container_width=True)
     st.markdown("""
@@ -145,3 +145,26 @@ elif app_mode == "Disease Recognition":
                 # Displaying the cure
                 cure = disease_cures.get(predicted_class, "NO INFORMATION AVAILABLE FOR THIS DISEASE.")
                 st.write("Recommended Cure: {}".format(cure))
+
+                # Augment the image using ImageDataGenerator
+                datagen = ImageDataGenerator(
+                    rotation_range=20,
+                    width_shift_range=0.2,
+                    height_shift_range=0.2,
+                    zoom_range=0.2,
+                    horizontal_flip=True,
+                    fill_mode='nearest'
+                )
+
+                # Prepare the image for augmentation
+                input_arr = img_to_array(load_img(test_image, target_size=(128, 128)))
+                input_arr = np.expand_dims(input_arr, axis=0)  # Add batch dimension
+
+                # Generate augmented images
+                augmented_images = datagen.flow(input_arr, batch_size=1)
+
+                # Display some augmented images
+                st.write("Augmented Images:")
+                for i in range(5):  # Display 5 augmented images
+                    augmented_image = next(augmented_images)[0].astype('float32')
+                    st.image(augmented_image / 255.0, caption=f'Augmented Image {i + 1}', use_column_width=True)
