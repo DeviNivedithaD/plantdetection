@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from tensorflow.keras.applications.vgg16 import preprocess_input
+from PIL import Image
 
 # Load the trained plant disease recognition model
 model = tf.keras.models.load_model("trained_model.keras")
@@ -58,7 +59,7 @@ disease_cures = {
     'Orange__Haunglongbing_(Citrus_greening)': "Remove infected trees and control psyllids.",
     'Peach___Bacterial_spot': "Use resistant varieties and apply copper-based fungicides.",
     'Peach__healthy': "No action needed.",
-    'Pepper,_bell__Bacterial_spot': "Remove infected plants and apply copper fungicides.",
+    'Pepper,_ bell__Bacterial_spot': "Remove infected plants and apply copper fungicides.",
     'Pepper,_bell__healthy': "No action needed.",
     'Potato__Early_blight': "Apply fungicides and practice crop rotation.",
     'Potato_Late_blight': "Use resistant varieties and apply fungicides.",
@@ -111,6 +112,10 @@ elif app_mode == "Disease Recognition":
         with open(image_path, "wb") as f:
             f.write(test_image.getbuffer())
         
+        # Display the uploaded image
+        uploaded_image = Image.open(image_path)
+        st.image(uploaded_image, caption="Uploaded Image", use_column_width=True)
+
         # Directly predict the disease
         predicted_index, confidence = model_prediction(image_path)
         disease_name = class_names[predicted_index]
