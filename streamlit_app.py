@@ -1,45 +1,26 @@
 import streamlit as st
 import tensorflow as tf
 import numpy as np
+from tensorflow.keras.applications import VGG16
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
-from tensorflow.keras.applications.vgg16 import preprocess_input
 from PIL import Image
 
-# Load the trained plant disease recognition model
-model = tf.keras.models.load_model("trained_model.keras")
+# Load the pre-trained VGG16 model for feature extraction
+feature_extractor = VGG16(weights='imagenet', include_top=False, pooling='avg')
 
-# Class names for the model
-class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple__healthy',
-                          'Blueberry__healthy', 'Cherry_(including_sour)__Powdery_mildew',
-                          'Cherry_(including_sour)__healthy', 'Corn_(maize)__Cercospora_leaf_spot Gray_leaf_spot',
-                          'Corn_(maize)__Common_rust_', 'Corn_(maize)__Northern_Leaf_Blight', 'Corn_(maize)__healthy',
-                          'Grape__Black_rot', 'Grape__Esca_(Black_Measles)', 'Grape__Leaf_blight_(Isariopsis_Leaf_Spot)',
-                          'Grape__healthy', 'Orange__Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot',
-                          'Peach__healthy', 'Pepper,_bell__Bacterial_spot', 'Pepper,_bell__healthy',
-                          'Potato__Early_blight', 'Potato_Late_blight', 'Potato__healthy',
-                          'Raspberry__healthy', 'Soybean_healthy', 'Squash__Powdery_mildew',
-                          'Strawberry__Leaf_scorch', 'Strawberry__healthy', 'Tomato__Bacterial_spot',
-                          'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato__Leaf_Mold',
-                          'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
-                          'Tomato__Target_Spot', 'Tomato_Tomato_Yellow_Leaf_Curl_Virus', 'Tomato__Tomato_mosaic_virus',
-                          'Tomato__healthy']
+# Load the trained model for prediction
+model = tf.keras.models.load_model("trained_model.keras")
 
 # TensorFlow Model Prediction
 def model_prediction(test_image):
-    """
-    Predicts the disease class for the given image using the trained model.
-    """
+    # Resize the image to 128x128
     image = load_img(test_image, target_size=(128, 128))
     input_arr = img_to_array(image)
-    input_arr = preprocess_input(np.array([input_arr]))  # Preprocess image for prediction
+    input_arr = np.array([input_arr])  # Convert single image to batch
     predictions = model.predict(input_arr)
     predicted_index = np.argmax(predictions)
     confidence = predictions[0][predicted_index]
-    
-    # Set a confidence threshold
-    if confidence < 0.7:  # Adjust threshold as needed
-        return None, confidence  # Return None if confidence is low
-    return predicted_index, confidence  # Return predicted class index and confidence score
+    return predicted_index, confidence  # Return index of max element and confidence
 
 # Dictionary of cures for each disease
 disease_cures = {
@@ -80,50 +61,87 @@ disease_cures = {
     'Tomato__Target_Spot': "Remove infected leaves and apply fungicides.",
     'Tomato_Tomato_Yellow_Leaf_Curl_Virus': "Remove infected plants and control aphids.",
     'Tomato__Tomato_mosaic_virus': "Remove infected plants and control aphids.",
-    'Tomato__healthy': "No action needed ."
+    'Tomato__healthy': "No action needed."
 }
 
-
-# Streamlit App
-st.sidebar.title("Dashboard")
+# Sidebar
+st.sidebar.title("Dashboard ")
 app_mode = st.sidebar.selectbox("Select Page", ["Home", "About", "Disease Recognition"])
 
 # Main Page
 if app_mode == "Home":
     st.header("PLANT DISEASE RECOGNITION SYSTEM")
-    st.image("th.jpg", use_container_width=True)
+    image_path = "th.jpg"
+    st.image(image_path, use_container_width=True)
     st.markdown("""
     Welcome to the Plant Disease Recognition System! 🌿🔍
     
-    Upload an image of a plant, and our system will analyze it to detect diseases.
+    Our mission is to help in identifying plant diseases efficiently. Upload an image of a plant, and our system will analyze it to detect any signs of diseases. Together, let's protect our crops and ensure a healthier harvest!
+
+    ### How It Works
+    1. *Upload Image:* Go to the **Disease Recognition** page and upload an image of a plant with suspected diseases.
+    2. *Analysis:* Our system will process the image using advanced algorithms to identify potential diseases.
+    3. *Results:* View the results and recommendations for further action.
+
+    ### Why Choose Us?
+    - *Accuracy:* Our system utilizes state-of-the-art machine learning techniques for accurate disease detection.
+    - *User -Friendly:* Simple and intuitive interface for seamless user experience.
+    - *Fast and Efficient:* Receive results in seconds, allowing for quick decision-making.
+
     ### Get Started
-    Click on the *Disease Recognition* page in the sidebar to upload an image.
+    Click on the *Disease Recognition* page in the sidebar to upload an image and experience the power of our Plant Disease Recognition System!
+
+    ### About Us
+    Learn more about the project, our team, and our goals on the *About* page.
     """)
 
+# About Project
 elif app_mode == "About":
     st.header("About")
     st.markdown("""
-    #### About Dataset
-    This dataset consists of 87K RGB images of healthy and diseased crop leaves, categorized into 38 classes.
-    """)
+                #### About Dataset
+                This dataset is recreated using offline augmentation from the original dataset.
+                This dataset consists of about 87K RGB images of healthy and diseased crop leaves which is categorized into 38 different classes. The total dataset is divided into an 80/20 ratio of training and validation set preserving the directory structure.
+                A new directory containing 33 test images is created later for prediction purposes.
+                #### Content
+                1. train (70295 images)
+                2. test (33 images)
+                3. validation (17572 images)
+                """)
+
+# Prediction Page
 elif app_mode == "Disease Recognition":
     st.header("Disease Recognition")
     test_image = st.file_uploader("Choose an Image:")
     if test_image is not None:
-        # Save the uploaded image temporarily
-        image_path = "uploaded_image.jpg"
-        with open(image_path, "wb") as f:
-            f.write(test_image.getbuffer())
-        
-        # Display the uploaded image
-        uploaded_image = Image.open(image_path)
-        st.image(uploaded_image, caption="Uploaded Image", use_column_width=True)
+        if st.button("Show Image"):
+            st.image(test_image, width=400, use_container_width=True)
+        # Predict button
+        if st.button("Predict"):
+            st.snow()
+            st.write("Our Prediction")
+            result_index, confidence = model_prediction(test_image)
+            confidence_threshold = 0.7  # Set a threshold for confidence
+            class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple__healthy',
+                          'Blueberry__healthy', 'Cherry_(including_sour)__Powdery_mildew',
+                          'Cherry_(including_sour)__healthy', 'Corn_(maize)__Cercospora_leaf_spot Gray_leaf_spot',
+                          'Corn_(maize)__Common_rust_', 'Corn_(maize)__Northern_Leaf_Blight', 'Corn_(maize)__healthy',
+                          'Grape__Black_rot', 'Grape__Esca_(Black_Measles)', 'Grape__Leaf_blight_(Isariopsis_Leaf_Spot)',
+                          'Grape__healthy', 'Orange__Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot',
+                          'Peach__healthy', 'Pepper,_bell__Bacterial_spot', 'Pepper,_bell__healthy',
+                          'Potato__Early_blight', 'Potato_Late_blight', 'Potato__healthy',
+                          'Raspberry__healthy', 'Soybean_healthy', 'Squash__Powdery_mildew',
+                          'Strawberry__Leaf_scorch', 'Strawberry__healthy', 'Tomato__Bacterial_spot',
+                          'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato__Leaf_Mold',
+                          'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
+                          'Tomato__Target_Spot', 'Tomato_Tomato_Yellow_Leaf_Curl_Virus', 'Tomato__Tomato_mosaic_virus',
+                          'Tomato__healthy']
+            predicted_class = class_name[result_index]
 
-        # Directly predict the disease
-        predicted_index, confidence = model_prediction(image_path)
-        if predicted_index is not None:
-            disease_name = class_names[predicted_index]
-            st.write(f"Predicted Disease: {disease_name} with confidence: {confidence:.2f}")
-            st.write("Recommended Cure:", disease_cures.get(disease_name, "No cure available."))
-        else:
-            st.write("The model is uncertain about the prediction. Please try another image.")
+            if confidence < confidence_threshold:
+                st.warning("The model is not confident about this prediction. It may be an unknown disease or not in the database.")
+                st.write("Predicted Class: Unknown")
+            else st.success("Model is predicting it's a {}".format(predicted_class))
+                # Displaying the cure
+                cure = disease_cures.get(predicted_class, "NO INFORMATION AVAILABLE FOR THIS DISEASE.")
+                st.write("Recommended Cure: {}".format(cure))
