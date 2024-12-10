@@ -61,7 +61,6 @@ disease_cures = {
     'Pepper,_bell__Bacterial_spot': "Remove infected plants and apply copper fungicides.",
     'Pepper,_bell__healthy': "No action needed.",
     'Potato__Early_blight': "Apply fungicides and practice crop rotation.",
-    ```python
     'Potato_Late_blight': "Use resistant varieties and apply fungicides.",
     'Potato__healthy': "No action needed.",
     'Raspberry__healthy': "No action needed.",
