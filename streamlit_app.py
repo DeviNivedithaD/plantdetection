@@ -8,19 +8,27 @@ from tensorflow.keras.applications.vgg16 import preprocess_input
 # Load the pre-trained VGG16 model for feature extraction
 feature_extractor = VGG16(weights='imagenet', include_top=False, pooling='avg')
 
-# Tensorflow Model Prediction
+# Load the trained plant disease recognition model
+model = tf.keras.models.load_model("trained_model.keras")
+
+# TensorFlow Model Prediction
 def model_prediction(test_image):
-    model = tf.keras.models.load_model("trained_model.keras")
+    """
+    Predicts the disease class for the given image using the trained model.
+    """
     image = load_img(test_image, target_size=(128, 128))
     input_arr = img_to_array(image)
-    input_arr = preprocess_input(np.array([input_arr]))  # Preprocess image for VGG16
+    input_arr = preprocess_input(np.array([input_arr]))  # Preprocess image for prediction
     predictions = model.predict(input_arr)
     predicted_index = np.argmax(predictions)
     confidence = predictions[0][predicted_index]
-    return predicted_index, confidence  # Return index of max element and confidence
+    return predicted_index, confidence  # Return predicted class index and confidence score
 
 # Function to extract features from an image
 def extract_features(image_path):
+    """
+    Extracts deep features from the given image using VGG16.
+    """
     image = load_img(image_path, target_size=(128, 128))
     input_arr = img_to_array(image)
     input_arr = np.expand_dims(input_arr, axis=0)
@@ -28,23 +36,16 @@ def extract_features(image_path):
     features = feature_extractor.predict(input_arr)
     return features
 
-# Function to calculate similarity
-def calculate_similarity(features1, features2):
-    return np.linalg.norm(features1 - features2)
-
 # Function to validate whether the image resembles a leaf/plant
-def validate_leaf_image(image_path):
+def validate_leaf_image(image_path, known_leaf_features):
     """
-    Validates if the uploaded image is likely to be a plant/leaf image 
-    using feature extraction and comparison to a basic threshold.
+    Validates if the uploaded image is likely to be a plant/leaf image using feature similarity.
     """
     features = extract_features(image_path)
-    # Set a threshold for similarity to plant images (tunable parameter)
+    similarity_scores = [np.linalg.norm(features - leaf_feature) for leaf_feature in known_leaf_features]
+    # Use the minimum similarity score for validation
     similarity_threshold = 0.5
-    # Placeholder: Replace with actual feature vector from a sample leaf image
-    sample_leaf_feature = np.random.random(features.shape)  # Simulate a known leaf feature
-    similarity_score = calculate_similarity(features, sample_leaf_feature)
-    return similarity_score <= similarity_threshold  # Returns True if similar to a leaf
+    return min(similarity_scores) <= similarity_threshold
 
 # Dictionary of cures for each disease
 disease_cures = {
@@ -88,7 +89,14 @@ disease_cures = {
     'Tomato__healthy': "No action needed ."
 }
 
-# Sidebar
+# Load sample features for validation (simulate known features)
+# Ideally, replace this with pre-extracted features from real plant images
+known_leaf_features = [
+    np.random.random((512,)),  # Placeholder for actual feature vectors
+    np.random.random((512,))   # Add more vectors as needed
+]
+
+# Streamlit App
 st.sidebar.title("Dashboard")
 app_mode = st.sidebar.selectbox("Select Page", ["Home", "About", "Disease Recognition"])
 
@@ -99,53 +107,34 @@ if app_mode == "Home":
     st.markdown("""
     Welcome to the Plant Disease Recognition System! 🌿🔍
     
-    Our mission is to help in identifying plant diseases efficiently. Upload an image of a plant, and our system will analyze it to detect any signs of diseases. Together, let's protect our crops and ensure a healthier harvest!
-
-    ### How It Works
-    1. *Upload Image:* Go to the **Disease Recognition** page and upload an image of a plant with suspected diseases.
-    2. *Analysis:* Our system will process the image using advanced algorithms to identify potential diseases.
-    3. *Results:* View the results and recommendations for further action.
-
-    ### Why Choose Us?
-    - *Accuracy:* Our system utilizes state-of-the-art machine learning techniques for accurate disease detection.
-    - *User -Friendly:* Simple and intuitive interface for seamless user experience.
-    - *Fast and Efficient:* Receive results in seconds, allowing for quick decision-making.
-
+    Upload an image of a plant, and our system will analyze it to detect diseases.
     ### Get Started
-    Click on the *Disease Recognition* page in the sidebar to upload an image and experience the power of our Plant Disease Recognition System!
-
-    ### About Us
-    Learn more about the project, our team, and our goals on the *About* page.
+    Click on the Disease Recognition page in the sidebar to upload an image.
     """)
+
 elif app_mode == "About":
     st.header("About")
     st.markdown("""
-                #### About Dataset
-                This dataset is recreated using offline augmentation from the original dataset.
-                This dataset consists of about 87K RGB images of healthy and diseased crop leaves which is categorized into 38 different classes. The total dataset is divided into an 80/20 ratio of training and validation set preserving the directory structure.
-                A new directory containing 33 test images is created later for prediction purposes.
-                #### Content
-                1. train (70295 images)
-                2. test (33 images)
-                3. validation (17572 images)
-                """)
-
+    #### About Dataset
+    This dataset consists of 87K RGB images of healthy and diseased crop leaves, categorized into 38 classes.
+    """)
 elif app_mode == "Disease Recognition":
     st.header("Disease Recognition")
     test_image = st.file_uploader("Choose an Image:")
     if test_image is not None:
         st.image(test_image, width=400, use_container_width=True)
         if st.button("Predict"):
+            st.snow()
             # Save uploaded image for processing
             with open("temp_image.jpg", "wb") as f:
                 f.write(test_image.getbuffer())
-            if not validate_leaf_image("temp_image.jpg"):
+            if not validate_leaf_image("temp_image.jpg", known_leaf_features):
                 st.warning("The uploaded image does not resemble a plant or leaf. Please upload a valid plant image.")
             else:
                 st.write("Processing...")
                 result_index, confidence = model_prediction("temp_image.jpg")
                 confidence_threshold = 0.7
-                class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple__healthy',
+               class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple__healthy',
                           'Blueberry__healthy', 'Cherry_(including_sour)__Powdery_mildew',
                           'Cherry_(including_sour)__healthy', 'Corn_(maize)__Cercospora_leaf_spot Gray_leaf_spot',
                           'Corn_(maize)__Common_rust_', 'Corn_(maize)__Northern_Leaf_Blight', 'Corn_(maize)__healthy',
