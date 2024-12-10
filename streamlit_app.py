@@ -141,7 +141,8 @@ elif app_mode == "Disease Recognition":
             if confidence < confidence_threshold:
                 st.warning("The model is not confident about this prediction. It may be an unknown disease or not in the database.")
                 st.write("Predicted Class: Unknown")
-            else st.success("Model is predicting it's a {}".format(predicted_class))
+            else:
+                st.success("Model is predicting it's a {}".format(predicted_class))
                 # Displaying the cure
                 cure = disease_cures.get(predicted_class, "NO INFORMATION AVAILABLE FOR THIS DISEASE.")
                 st.write("Recommended Cure: {}".format(cure))
