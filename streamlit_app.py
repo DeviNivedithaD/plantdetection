@@ -119,7 +119,7 @@ if app_mode == "Home":
     """)
 elif app_mode == "About":
     st.header("About")
-     st.markdown("""
+    st.markdown("""
                 #### About Dataset
                 This dataset is recreated using offline augmentation from the original dataset.
                 This dataset consists of about 87K RGB images of healthy and diseased crop leaves which is categorized into 38 different classes. The total dataset is divided into an 80/20 ratio of training and validation set preserving the directory structure.
