@@ -54,7 +54,6 @@ disease_cures = {
     'Tomato__Tomato_mosaic_virus': "Remove infected plants and control aphids.",
     'Tomato__healthy': "No action needed."
 }
-
 # Sidebar
 st.sidebar.title("Dashboard")
 app_mode = st.sidebar.selectbox("Select Page", ["Home", "About", "Disease Recognition"])
@@ -93,6 +92,9 @@ elif (app_mode == "Disease Recognition"):
         # Open the image using PIL
         image = Image.open(test_image)
         
+        # Compress the image to 128x128
+        image = image.resize((128, 128))
+
         if (st.button("Show Image")):
             st.image(image, width=400)  # Adjusted to use width parameter
         
