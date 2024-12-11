@@ -121,7 +121,7 @@ elif (app_mode == "Disease Recognition"):
                           'Potato__Early_blight', 'Potato_Late_blight', 'Potato__healthy',
                           'Raspberry__healthy', 'Soybean_healthy', 'Squash__Powdery_mildew',
                           'Strawberry__Leaf_scorch', 'Strawberry__healthy', 'Tomato__Bacterial_spot',
-                          'Tomato__Early_blight', 'Tomato__Late_blight', 'Tomato__Leaf_Mold',
+                          'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato__Leaf_Mold',
                           'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
                           'Tomato__Target_Spot', 'Tomato_Tomato_Yellow_Leaf_Curl_Virus', 'Tomato__Tomato_mosaic_virus',
                           'Tomato__healthy']
