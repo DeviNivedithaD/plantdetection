@@ -61,14 +61,15 @@ app_mode = st.sidebar.selectbox("Select Page", ["Home", "About", "Disease Recogn
 if (app_mode == "Home"):
     st.header("PLANT DISEASE RECOGNITION SYSTEM")
     image_path = "th.jpg"
-    st.image(image_path, use_column_width=True)
+    st.image(image_path, width=None)  # Use 'width=None' for full width
+    
     st.markdown("""
     Welcome to the Plant Disease Recognition System! 🌿🔍
     
     Our mission is to help in identifying plant diseases efficiently. Upload an image of a plant, and our system will analyze it to detect any signs of diseases. Together, let's protect our crops and ensure a healthier harvest!
 
     ### How It Works
-    1. *Upload Image:* Go to the **Disease Recognition ** page and upload an image of a plant with suspected diseases.
+    1. *Upload Image:* Go to the **Disease Recognition** page and upload an image of a plant with suspected diseases.
     2. *Analysis:* Our system will process the image using advanced algorithms to identify potential diseases.
     3. *Results:* View the results and recommendations for further action.
 
@@ -104,7 +105,7 @@ elif (app_mode == "Disease Recognition"):
     test_image = st.file_uploader("Choose an Image:")
     if (test_image is not None):
         if (st.button("Show Image")):
-            st.image(test_image, width=400, use_column_width=True)
+            st.image(test_image, width=400)  # Adjusted to use width parameter
         # Predict button
         if (st.button("Predict")):
             st.snow()
@@ -121,10 +122,10 @@ elif (app_mode == "Disease Recognition"):
                           'Potato__Early_blight', 'Potato_Late_blight', 'Potato__healthy',
                           'Raspberry__healthy', 'Soybean_healthy', 'Squash__Powdery_mildew',
                           'Strawberry__Leaf_scorch', 'Strawberry__healthy', 'Tomato__Bacterial_spot',
-                          'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato__Leaf_Mold',
+                          'Tomato__Early_blight', 'Tomato__Late_blight', 'Tomato__Leaf_Mold',
                           'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
                           'Tomato__Target_Spot', 'Tomato_Tomato_Yellow_Leaf_Curl_Virus', 'Tomato__Tomato_mosaic_virus',
-                          'Tomato___healthy']
+                          'Tomato__healthy']
             predicted_class = class_name[result_index]
             st.success("Model is predicting it's a {}".format(predicted_class))
             # Displaying the cure
