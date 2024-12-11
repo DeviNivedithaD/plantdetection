@@ -162,7 +162,7 @@ elif (app_mode == "Disease Recognition"):
                           'Grape__healthy', 'Orange__Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot',
                           'Peach__healthy', 'Pepper,_bell__Bacterial_spot', 'Pepper,_bell__healthy',
                           'Potato__Early_blight', 'Potato_Late_blight', 'Potato__healthy',
-                          'Raspberry__healthy', 'Soy ```python
+                          'Raspberry__healthy', 
                           'bean_healthy', 'Squash__Powdery_mildew',
                           'Strawberry__Leaf_scorch', 'Strawberry__healthy', 'Tomato__Bacterial_spot',
                           'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato__Leaf_Mold',
