@@ -26,6 +26,9 @@ def model_prediction(test_image):
         input_arr = np.array([input_arr])  # convert single image to batch
         input_arr = input_arr / 255.0  # Normalize to [0, 1]
 
+        # Debugging: Print shape of input array
+        print("Input Array Shape:", input_arr.shape)
+
         predictions = model.predict(input_arr)
         predicted_index = np.argmax(predictions)
         confidence = predictions[0][predicted_index]
@@ -62,18 +65,18 @@ disease_cures = {
     'Cherry_(including_sour)__Powdery_mildew': "Use sulfur based fungicides.",
     'Cherry_(including_sour)__healthy': "No action needed.",
     'Corn_(maize)__Cercospora_leaf_spot Gray_leaf_spot': "Apply fungicides and rotate crops.",
-    'Corn_(maize)__Common_rust_': "Use resistant varieties and fungicides.",
+    'Corn_(maize)_Common_rust': "Use resistant varieties and fungicides.",
     'Corn_(maize)__Northern_Leaf_Blight': "Remove infected debris and apply fungicides.",
     'Corn_(maize)__healthy': "No action needed.",
     'Grape__Black_rot': "Remove infected leaves and apply fungicides.",
-    'Grape__Esca_(Black_Measles)': "Prune infected vines and improve drainage.",
-    'Grape__Leaf_blight_(Isariopsis_Leaf_Spot)': "Use fungicides and practice crop rotation.",
+    'Grape_Esca(Black_Measles)': "Prune infected vines and improve drainage.",
+    'Grape_Leaf_blight(Isariopsis_Leaf_Spot)': "Use fungicides and practice crop rotation.",
     'Grape__healthy': "No action needed.",
-    'Orange__Haunglongbing_(Citrus_greening)': "Remove infected trees and control psyllids.",
+    'Orange_Haunglongbing(Citrus_greening)': "Remove infected trees and control psyllids.",
     'Peach___Bacterial_spot': "Use resistant varieties and apply copper-based fungicides.",
     'Peach__healthy': "No action needed.",
-    'Pepper,_bell__Bacterial_spot': "Remove infected plants and apply copper fungicides.",
-    'Pepper,_bell__healthy': "No action needed.",
+    'Pepper,bell_Bacterial_spot': "Remove infected plants and apply copper fungicides.",
+    'Pepper,bell_healthy': "No action needed.",
     'Potato__Early_blight': "Apply fungicides and practice crop rotation.",
     'Potato_Late_blight': "Use resistant varieties and apply fungicides.",
     'Potato__healthy': "No action needed.",
@@ -105,24 +108,7 @@ if (app_mode == "Home"):
     st.image(image_path, use_container_width=True)
     st.markdown("""
     Welcome to the Plant Disease Recognition System! 🌿🔍
-    
-    Our mission is to help in identifying plant diseases efficiently. Upload an image of a plant, and our system will analyze it to detect any signs of diseases. Together, let's protect our crops and ensure a healthier harvest!
-
-    ### How It Works
-    1. *Upload Image:* Go to the **Disease Recognition** page and upload an image of a plant with suspected diseases.
-    2. *Analysis:* Our system will process the image using advanced algorithms to identify potential diseases.
-    3. *Results:* View the results and recommendations for further action.
-
-    ### Why Choose Us?
-    - *Accuracy:* Our system utilizes state-of-the-art machine learning techniques for accurate disease detection.
-    - *User -Friendly:* Simple and intuitive interface for seamless user experience.
-    - *Fast and Efficient:* Receive results in seconds, allowing for quick decision-making.
-
-    ### Get Started
-    Click on the *Disease Recognition* page in the sidebar to upload an image and experience the power of our Plant Disease Recognition System!
-
-    ### About Us
-    Learn more about the project, our team, and our goals on the *About* page.
+    ...
     """)
 
 # About Project
@@ -130,13 +116,7 @@ elif (app_mode == "About"):
     st.header("About")
     st.markdown("""
                 #### About Dataset
-                This dataset is recreated using offline augmentation from the original dataset.
-                This dataset consists of about 87K RGB images of healthy and diseased crop leaves which is categorized into 38 different classes. The total dataset is divided into an 80/20 ratio of training and validation set preserving the directory structure.
-                A new directory containing 33 test images is created later for prediction purposes.
-                #### Content
-                1. train (70295 images)
-                2. test (33 images)
-                3. validation (17572 images)
+                ...
                 """)
 
 # Prediction Page
@@ -157,13 +137,12 @@ elif (app_mode == "Disease Recognition"):
             class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple__healthy',
                           'Blueberry__healthy', 'Cherry_(including_sour)__Powdery_mildew',
                           'Cherry_(including_sour)__healthy', 'Corn_(maize)__Cercospora_leaf_spot Gray_leaf_spot',
-                          'Corn_(maize)__Common_rust_', 'Corn_(maize)__Northern_Leaf_Blight', 'Corn_(maize)__healthy',
+                          'Corn_(maize )__Common_rust_', 'Corn_(maize)__Northern_Leaf_Blight', 'Corn_(maize)__healthy',
                           'Grape__Black_rot', 'Grape__Esca_(Black_Measles)', 'Grape__Leaf_blight_(Isariopsis_Leaf_Spot)',
                           'Grape__healthy', 'Orange__Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot',
                           'Peach__healthy', 'Pepper,_bell__Bacterial_spot', 'Pepper,_bell__healthy',
                           'Potato__Early_blight', 'Potato_Late_blight', 'Potato__healthy',
-                          'Raspberry__healthy', 
-                          'bean_healthy', 'Squash__Powdery_mildew',
+                          'Raspberry__healthy', 'Soybean_healthy', 'Squash__Powdery_mildew',
                           'Strawberry__Leaf_scorch', 'Strawberry__healthy', 'Tomato__Bacterial_spot',
                           'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato__Leaf_Mold',
                           'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
