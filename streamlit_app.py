@@ -15,7 +15,44 @@ def model_prediction(test_image):
 
 # Dictionary of cures for each disease
 disease_cures = {
-    # ... (same as before)
+    'Apple__Apple_scab': "Apply fungicides and improve air circulation.",
+    'Apple_Black_rot': "Remove infected leaves and apply fungicides.",
+    'Apple_Cedar_apple_rust': "Use resistant varieties and apply fungicides.",
+    'Apple__healthy': "No action needed.",
+    'Blueberry__healthy': "No action needed.",
+    'Cherry_(including_sour)__Powdery_mildew': "Use sulfur based fungicides.",
+    'Cherry_(including_sour)__healthy': "No action needed.",
+    'Corn_(maize)__Cercospora_leaf_spot Gray_leaf_spot': "Apply fungicides and rotate crops.",
+    'Corn_(maize)__Common_rust_': "Use resistant varieties and fungicides.",
+    'Corn_(maize)__Northern_Leaf_Blight': "Remove infected debris and apply fungicides.",
+    'Corn_(maize)__healthy': "No action needed.",
+    'Grape__Black_rot': "Remove infected leaves and apply fungicides.",
+    'Grape__Esca_(Black_Measles)': "Prune infected vines and improve drainage.",
+    'Grape__Leaf_blight_(Isariopsis_Leaf_Spot)': "Use fungicides and practice crop rotation.",
+    'Grape__healthy': "No action needed.",
+    'Orange__Haunglongbing_(Citrus_greening)': "Remove infected trees and control psyllids.",
+    'Peach___Bacterial_spot': "Use resistant varieties and apply copper-based fungicides.",
+    'Peach__healthy': "No action needed.",
+    'Pepper,_bell__Bacterial_spot': "Remove infected plants and apply copper fungicides.",
+    'Pepper,_bell__healthy': "No action needed.",
+    'Potato__Early_blight': "Apply fungicides and practice crop rotation.",
+    'Potato_Late_blight': "Use resistant varieties and apply fungicides.",
+    'Potato__healthy': "No action needed.",
+    'Raspberry__healthy': "No action needed.",
+    'Soybean_healthy': "No action needed.",
+    'Squash__Powdery_mildew': "Use sulfur-based fungicides and improve air circulation.",
+    'Strawberry__Leaf_scorch': "Use resistant varieties and improve drainage.",
+    'Strawberry__healthy': "No action needed.",
+    'Tomato__Bacterial_spot': "Remove infected plants and apply copper fungicides.",
+    'Tomato__Early_blight': "Apply fungicides and practice crop rotation.",
+    'Tomato_Late_blight': "Use resistant varieties and apply fungicides.",
+    'Tomato__Leaf_Mold': "Improve air circulation and use fungicides.",
+    'Tomato__Septoria_leaf_spot': "Remove infected leaves and apply fungicides.",
+    'Tomato__Spider_mites Two-spotted_spider_mite': "Use miticides and increase humidity.",
+    'Tomato__Target_Spot': "Remove infected leaves and apply fungicides.",
+    'Tomato_Tomato_Yellow_Leaf_Curl_Virus': "Remove infected plants and control aphids.",
+    'Tomato__Tomato_mosaic_virus': "Remove infected plants and control aphids.",
+    'Tomato__healthy': "No action needed."
 }
 
 # Sidebar
