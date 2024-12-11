@@ -108,7 +108,6 @@ elif (app_mode == "Disease Recognition"):
             st.image(test_image, width=400)  # Adjusted to use width parameter
         # Predict button
         if (st.button("Predict")):
-            st.snow()
             st.write("Our Prediction")
             result_index = model_prediction(test_image)
             # Reading Labels
