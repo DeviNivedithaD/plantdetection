@@ -11,7 +11,7 @@ def model_prediction(test_image):
     input_arr = tf.keras.preprocessing.image.img_to_array(image)
     input_arr = np.array([input_arr])  # convert single image to batch
     predictions = model.predict(input_arr)
-    return np.argmax(predictions)  # return index of max element
+    return predictions  # return predictions instead of index
 
 # Dictionary of cures for each disease
 disease_cures = {
@@ -99,7 +99,10 @@ elif (app_mode == "Disease Recognition"):
         # Predict button
         if (st.button("Predict")):
             st.write("Our Prediction")
-            result_index = model_prediction(image)
+            predictions = model_prediction(image)
+            result_index = np.argmax(predictions)
+            confidence = predictions[0][result_index]  # Get confidence of the prediction
+            
             # Reading Labels
             class_name = ['Apple__Apple_scab', 'Apple_Black_rot', 'Apple_Cedar_apple_rust', 'Apple__healthy',
                           'Blueberry__healthy', 'Cherry_(including_sour)__Powdery_mildew',
@@ -116,11 +119,16 @@ elif (app_mode == "Disease Recognition"):
                           'Tomato__Target_Spot', 'Tomato_Tomato_Yellow_Leaf_Curl_Virus', 'Tomato__Tomato_mosaic_virus',
                           'Tomato__healthy']
             predicted_class = class_name[result_index]
-            st.success("Model is predicting it's a {}".format(predicted_class))
             
-            # Displaying the cure or no info available
-            if predicted_class in disease_cures:
-                cure = disease_cures.get(predicted_class)
-                st.write("Recommended Cure: {}".format(cure))
+            # Check confidence threshold
+            if confidence < 0.5:  # Adjust threshold as needed
+                st.warning(" The model is not confident enough in its prediction. Please ensure the image is of a plant leaf.")
             else:
-                st .write("No information available for this disease.")
+                st.success("Model is predicting it's a {}".format(predicted_class))
+                
+                # Displaying the cure or no info available
+                if predicted_class in disease_cures:
+                    cure = disease_cures.get(predicted_class)
+                    st.write("Recommended Cure: {}".format(cure))
+                else:
+                    st.write("No information available for this disease.")
