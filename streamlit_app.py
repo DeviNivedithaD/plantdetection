@@ -8,24 +8,31 @@ from PIL import Image
 # Load the pre-trained VGG16 model for feature extraction
 feature_extractor = VGG16(weights='imagenet', include_top=False, pooling='avg')
 
+# Load the model once at the start
+model = tf.keras.models.load_model("trained_model.keras")
+
 # Tensorflow Model Prediction
 def model_prediction(test_image):
-    model = tf.keras.models.load_model("trained_model.keras")
-    
-    # Open the image using PIL
-    image = Image.open(test_image)
-    
-    # Resize the image to 128x128 and convert to RGB
-    image = image.resize((128, 128))
-    image = image.convert("RGB")
-    
-    # Convert the image to array
-    input_arr = img_to_array(image)
-    input_arr = np.array([input_arr])  # convert single image to batch
-    predictions = model.predict(input_arr)
-    predicted_index = np.argmax(predictions)
-    confidence = predictions[0][predicted_index]
-    return predicted_index, confidence  # return index of max element and confidence
+    try:
+        # Open the image using PIL
+        image = Image.open(test_image)
+
+        # Resize the image to 128x128 and convert to RGB
+        image = image.resize((128, 128))
+        image = image.convert("RGB")
+
+        # Convert the image to array
+        input_arr = img_to_array(image)
+        input_arr = np.array([input_arr])  # convert single image to batch
+        input_arr = input_arr / 255.0  # Normalize to [0, 1]
+
+        predictions = model.predict(input_arr)
+        predicted_index = np.argmax(predictions)
+        confidence = predictions[0][predicted_index]
+        return predicted_index, confidence  # return index of max element and confidence
+    except Exception as e:
+        st.error("Error processing image: {}".format(e))
+        return None, None
 
 # Function to extract features from an image
 def extract_features(image_path):
