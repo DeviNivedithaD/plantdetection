@@ -29,6 +29,12 @@ def model_prediction(test_image):
         predictions = model.predict(input_arr)
         predicted_index = np.argmax(predictions)
         confidence = predictions[0][predicted_index]
+
+        # Debugging: Print predictions and confidence
+        print("Predictions:", predictions)  # Log predictions
+        print("Predicted Index:", predicted_index)  # Log predicted index
+        print("Confidence:", confidence)  # Log confidence
+
         return predicted_index, confidence  # return index of max element and confidence
     except Exception as e:
         st.error("Error processing image: {}".format(e))
@@ -78,12 +84,12 @@ disease_cures = {
     'Strawberry__healthy': "No action needed.",
     'Tomato__Bacterial_spot': "Remove infected plants and apply copper fungicides.",
     'Tomato__Early_blight': "Apply fungicides and practice crop rotation.",
-    'Tomato_Late_blight': "Use resistant varieties and apply fungicides.",
+    'Tomato_Late_b light': "Use resistant varieties and apply fungicides.",
     'Tomato__Leaf_Mold': "Improve air circulation and use fungicides.",
     'Tomato__Septoria_leaf_spot': "Remove infected leaves and apply fungicides.",
     'Tomato__Spider_mites Two-spotted_spider_mite': "Use miticides and increase humidity.",
     'Tomato__Target_Spot': "Remove infected leaves and apply fungicides.",
-    'Tomato_Tomato _Yellow_Leaf_Curl_Virus': "Remove infected plants and control aphids.",
+    'Tomato_Tomato_Yellow_Leaf_Curl_Virus': "Remove infected plants and control aphids.",
     'Tomato__Tomato_mosaic_virus': "Remove infected plants and control aphids.",
     'Tomato__healthy': "No action needed."
 }
@@ -142,7 +148,7 @@ elif (app_mode == "Disease Recognition"):
             # Open the image using PIL for display
             image = Image.open(test_image)
             st.image(image, width=400, use_container_width=True)
-        
+
         # Predict button
         if (st.button("Predict")):
             st.write("Our Prediction")
@@ -156,7 +162,8 @@ elif (app_mode == "Disease Recognition"):
                           'Grape__healthy', 'Orange__Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot',
                           'Peach__healthy', 'Pepper,_bell__Bacterial_spot', 'Pepper,_bell__healthy',
                           'Potato__Early_blight', 'Potato_Late_blight', 'Potato__healthy',
-                          'Raspberry__healthy', 'Soybean_healthy', 'Squash__Powdery_mildew',
+                          'Raspberry__healthy', 'Soy ```python
+                          'bean_healthy', 'Squash__Powdery_mildew',
                           'Strawberry__Leaf_scorch', 'Strawberry__healthy', 'Tomato__Bacterial_spot',
                           'Tomato__Early_blight', 'Tomato_Late_blight', 'Tomato__Leaf_Mold',
                           'Tomato__Septoria_leaf_spot', 'Tomato__Spider_mites Two-spotted_spider_mite',
